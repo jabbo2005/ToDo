@@ -7,6 +7,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace ToDoApi
 {
@@ -16,6 +17,7 @@ namespace ToDoApi
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
+                .AddJsonFile("myappsettings.json")
                 .AddJsonFile("appsettings.json");
 
             if (env.IsEnvironment("Development"))
@@ -35,15 +37,17 @@ namespace ToDoApi
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-
+            services.Configure<MyAppSettings>(Configuration.GetSection("AppSettings"));
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IApplicationEnvironment aenv, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddConsole(Configuration.GetSection("--------------------Logging"));
+            //loggerFactory.AddDebug((category, loglevel) => category.Contains("MyController") && loglevel >= LogLevel.Debug);
+            loggerFactory.AddDebug((category, loglevel) => loglevel >= LogLevel.Debug);
+            //loggerFactory.MinimumLevel = LogLevel.Debug;
 
             app.UseIISPlatformHandler();
 
@@ -58,5 +62,12 @@ namespace ToDoApi
 
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+    }
+
+    public class MyAppSettings
+    {
+        public string ApplicationTitle { get; set; }
+        public int TopItemsOnStart { get; set; }
+        public bool ShowEditLink { get; set; }
     }
 }
