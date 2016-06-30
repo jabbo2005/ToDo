@@ -37,7 +37,7 @@ namespace ToDoApi
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-            services.Configure<MyAppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<MyAppSettings>(Configuration.GetSection("MyAppSettings"));
             services.AddMvc();
         }
 

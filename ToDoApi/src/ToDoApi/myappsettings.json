@@ -1,3 +1,7 @@
 ﻿{
-
+  "MyAppSettings": {
+    "ApplicationTitle": "My Application Title",
+    "TopItemsOnStart": 10,
+    "ShowEditLink": true
+  }
 }
